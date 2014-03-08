@@ -18,24 +18,26 @@ public class MinisterOfAggresion extends Minister {
 	public MinisterOfAggresion(Exapi exapi, BasicOrders basicOrders,
 			ContractQueue contractQueue) {
 		super(exapi, basicOrders, contractQueue);
-		
+
 		currentContract = null;
 	}
 
 	@Override
 	public void gameUpdate() {
 		if (currentContract == null)
-		{
-			for (Unit unit : exapi.getPlayerUnits(UnitTypes.Terran_Barracks))
-			{
-				System.out.println(unit);
-			}
-			
+		{	
 			if(exapi.getPlayerUnits(UnitTypes.Terran_Barracks).isEmpty() && !exapi.areWeBuilding(UnitTypes.Terran_Barracks))
 			{
 				UnitType barracksType = exapi.getUnitType(UnitTypes.Terran_Barracks);
 				currentContract = new Contract(barracksType.getMineralPrice(), barracksType.getGasPrice(), this);
 				contractQueue.addContract(currentContract);
+			}
+			else
+			{
+				exapi.getBaseApi().train(exapi.getPlayerUnits(UnitTypes.Terran_Barracks).get(0).getID(), UnitTypes.Terran_Marine.ordinal());
+				
+				Point pos = getBuildTile(exapi.getPlayerUnits(UnitTypes.Terran_SCV).get(0).getID(), UnitTypes.Terran_Supply_Depot.ordinal(), homeX, homeY);
+				exapi.build(exapi.getPlayerUnits(UnitTypes.Terran_SCV).get(0), pos.x, pos.y, UnitTypes.Terran_Supply_Depot);
 			}
 		}
 		
@@ -45,14 +47,25 @@ public class MinisterOfAggresion extends Minister {
 	@Override
 	public void contractFulfilled(IContractInfo contractInfo) {
 		ArrayList<Unit> workers = exapi.getPlayerUnits(UnitTypes.Terran_SCV);
-		
-		exapi.getBaseApi().setGameSpeed(20);
+		ArrayList<Unit> commandCenters = exapi.getPlayerUnits(UnitTypes.Terran_Command_Center);
 		
 		if (!workers.isEmpty())
 		{
 			Unit builder = workers.get(0);
+			Point pos = new Point();
 			
-			Point pos = getBuildTile(workers.get(0).getID(), UnitTypes.Terran_Barracks.ordinal(), workers.get(0).getX(), workers.get(0).getY());
+			if (commandCenters.isEmpty())
+			{
+				pos.x = builder.getX();
+				pos.y = builder.getY();
+			}
+			else
+			{
+				pos.x = commandCenters.get(0).getX();
+				pos.y = commandCenters.get(0).getY();
+			}
+			
+			pos = getBuildTile(workers.get(0).getID(), UnitTypes.Terran_Barracks.ordinal(), pos.x, pos.y);
 			
 			System.out.println("Building barracks");
 			System.out.println(builder.getTypeID() + " " + UnitTypes.Terran_SCV.ordinal());

@@ -59,7 +59,12 @@ public class Exapi {
 		return false;
 	}
 	
-	UnitType getUnitType(UnitTypes type)
+	public UnitType getUnitType(int type)
+	{
+		return bwapi.getUnitType(type);
+	}
+	
+	public UnitType getUnitType(UnitTypes type)
 	{
 		return bwapi.getUnitType(type.ordinal());
 	}

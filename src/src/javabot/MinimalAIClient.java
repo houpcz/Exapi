@@ -13,6 +13,7 @@ import exbot.IMinister;
 import exbot.MinisterOfAggresion;
 import exbot.MinisterOfResources;
 import javabot.model.Unit;
+import javabot.types.UnitType;
 import javabot.types.UnitType.UnitTypes;
 import javabot.util.BWColor;
 public class MinimalAIClient implements BWAPIEventListener {
@@ -50,7 +51,7 @@ public class MinimalAIClient implements BWAPIEventListener {
 		
 		// set game speed to 30 (0 is the fastest. Tournament speed is 20)
 		// You can also change the game speed from within the game by "/speed X" command.
-		bwapi.setGameSpeed(0);
+		bwapi.setGameSpeed(100);
 		
 		// analyze the map
 		bwapi.loadMapData(true);
@@ -60,6 +61,11 @@ public class MinimalAIClient implements BWAPIEventListener {
 		bwapi.printText("Enemy race ID: "+String.valueOf(bwapi.getEnemies().get(0).getRaceID()));	// Z=0,T=1,P=2
 		
 		bwapi.printText("Enemy unit count "+ String.valueOf(bwapi.getEnemyUnits().size()));
+		
+		for (IMinister minister : ministers)
+		{
+			minister.gameStart();
+		}
 	}
 	
 	private void customEvents()
@@ -95,6 +101,9 @@ public class MinimalAIClient implements BWAPIEventListener {
 			}
 			
 			bwapi.drawCircle(unit.getX(), unit.getY(), 5, color, true, false);
+			
+			UnitType type = exapi.getUnitType(unit.getTypeID());
+			bwapi.drawBox(unit.getTileX() * 32, unit.getTileY() * 32, (unit.getTileX() + type.getTileWidth()) * 32, (unit.getTileY() + type.getTileHeight()) * 32, BWColor.BROWN, false, false);
 		}
 		
 		//bwapi.printText("Enemy unit count "+ String.valueOf(bwapi.getEnemyUnits().size()));

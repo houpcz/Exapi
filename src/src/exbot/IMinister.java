@@ -18,5 +18,6 @@ public interface IMinister {
 	public void unitMorph(Unit unit);
 	public void unitShow(Unit unit);
 	public void workerIsIdle(Unit worker);
+	public void gameStart();
 	public void gameUpdate();
 }
